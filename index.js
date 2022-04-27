@@ -17,6 +17,14 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
+// built-in middleware to handle urlencoded form data
+app.use(express.urlencoded({ extended: false }));
+
+// built-in middleware for json 
+app.use(express.json());
+
+
+// MONGO_URI=mongodb+srv://mongotut:testing123@cluster0.kogqa.mongodb.net/CompanyDB?retryWrites=true&w=majority
 
 // Handle options credentials check - before CORS!
 // and fetch cookies credentials requirement
@@ -25,11 +33,6 @@ app.use(credentials);
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
 
-// built-in middleware to handle urlencoded form data
-app.use(express.urlencoded({ extended: false }));
-
-// built-in middleware for json 
-app.use(express.json());
 
 //middleware for cookies
 app.use(cookieParser());
