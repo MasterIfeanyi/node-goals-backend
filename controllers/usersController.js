@@ -33,7 +33,6 @@ const updateUser = async (req, res) => {
     
     const data = { username: req.body.username };
     
-    console.log(username);
     try {
         const result = await User.findByIdAndUpdate(id, { $set: data });
         if (!result) {
