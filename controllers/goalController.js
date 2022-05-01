@@ -1,5 +1,5 @@
-const Goal = require("../models/goalModel")
-const User = require("../models/User")
+const Goal = require("../models/goalModel");
+const User = require("../models/User");
 
 const getGoals = async (req, res) => {
     const goals = await Goal.find({ user: req.id });
@@ -16,7 +16,11 @@ const createGoal = async (req, res) => {
             text,
             user: req.id
         })
-        res.status(201).json(goal);
+        
+        // find the user goals to send to the front-end
+        const result = await Goal.find({ user: req.id });
+        if (!result) return res.status(200).json({ "message": "No goals found" });
+        res.status(201).json(result);
     } catch (err) {
         return res.status(500).json({ "msg": err.message });
     }
@@ -36,12 +40,16 @@ const updateGoal = async (req, res) => {
         // check for user
         if (!user) return res.status(400).json({ "msg": "User not found" });
 
-        // make sure the logged in user matches the goal user
+        // make sure the logged in user matches the goal user_id
         if (goal.user.toString() !== user.id) return res.status(401).json({ "msg": "User not authorized" }); //unAuthorized
         
         const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, { $set: data }, {new: true});
         // const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, { $set: req.body }, {new: true});
-        res.status(200).json({"message": `Updated goal ${req.params.id} ${updatedGoal}`})
+        
+        // find the user goals to send to the front-end
+        const result = await Goal.find({ user: req.id })
+        if (!result) return res.status(200).json({ "message": "No goals found" });
+        res.status(200).json(result)
     } catch (err) {
         return res.status(500).json({ "msg": err.message });
     }
@@ -65,7 +73,11 @@ const deleteGoal = async (req, res) => {
         if (goal.user.toString() !== user.id) return res.status(401).json({ "msg": "User not authorized" });
 
         await Goal.findByIdAndRemove(req.params.id);
-        res.status(200).json({"message": `Delete goal ${req.params.id}`})
+
+        // find the user goals to send to the front-end
+        const result = await Goal.find({user: req.id})
+        if (!result) return res.status(200).json({ "message": "No goals found" });
+        res.status(200).json(result);
     } catch (err) {
         return res.status(500).json({ "msg": err.message });
     }
@@ -86,7 +98,9 @@ const getOneGoal = async (req, res) => {
         // make sure the logged in user matches the goal user
         if (goal.user.toString() !== user.id) return res.status(401).json({ "msg": "User not authorized" });
 
+        // find the user goals to send to the front-end
         const result = await Goal.findById(req.params.id);
+        if (!result) return res.status(200).json({ "message": "No goals found" });
         res.status(200).json({ result });
     } catch (err) {
         return res.status(500).json({ "msg": err.message });

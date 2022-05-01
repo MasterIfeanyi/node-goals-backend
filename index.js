@@ -51,18 +51,7 @@ app.use(verifyJWT);
 app.use("/goals", require("./routes/api/goalRoutes"));
 app.use("/users", require("./routes/api/user"));
 
-// if (process.env.NODE_ENV === "production") {
-//     //set static folder
-//     app.use(express.static(path.join(__dirname, "frontend", "build")))
 
-//     app.get("*", (req, res) => {
-//         res.sendFile(path.join(__dirname, "frontend", "build", "index.html"))
-//     })
-// } else {
-//     app.get("/", (req, res) => {
-//         res.send("Please set to production");
-//     })
-// }
 
 mongoose.connection.once("open", () => {
     console.log(`Connected to MongoDB`.cyan.underline)

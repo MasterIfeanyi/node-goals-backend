@@ -16,7 +16,7 @@ const generateJWT = (username, roles, id) => {
             }
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "60s" }
+        { expiresIn: "3m" }
     )
 }
 
@@ -52,7 +52,7 @@ const handleLogin = async (req, res) => {
                 },
                 // { "username": foundUser.username },
                 process.env.REFRESH_TOKEN_SECRET,
-                {expiresIn: "2m"}
+                {expiresIn: "1d"}
             )
 
             // Saving refreshToken with current user
