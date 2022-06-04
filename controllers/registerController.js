@@ -61,7 +61,7 @@ const handleNewUser = async (req, res) => {
 
         if (result) {
             // saving refresh token in a cookie
-            res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+            res.cookie('jwt', refreshToken, { httpOnly: true, secure: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000 });
             res.status(201).json({ accessToken, roles: Object.values(result.roles).filter(Boolean) });
         }
 
