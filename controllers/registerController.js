@@ -21,14 +21,17 @@ const generateJWT = (username, roles, id) => {
 const handleNewUser = async (req, res) => {
     const { user, pwd, roles } = req.body;
 
-    if (!user || !pwd) res.status(400).json({ "message": "Username and password are required." });
+    if (!user || !pwd) {
+        res.status(400).json({ "message": "Username and password are required." });
+        return;
+    }
 
     // check for duplicate usernames in the db
     const duplicate = await User.findOne({ username: user }).exec();
     if (duplicate) return res.sendStatus(409); // Conflict
 
     try {
-        
+
         //encrypt the password
         const hashedPwd = await bcrypt.hash(pwd, 10);
 
@@ -43,16 +46,16 @@ const handleNewUser = async (req, res) => {
         const accessToken = generateJWT(result.username, result.roles, result._id)
 
         const refreshToken = jwt.sign(
-                {
-                    "UserInfo": {
-                        "id": result._id,
-                        "username": result.username,
-                        "roles": roles 
-                    }
-                },
-                process.env.REFRESH_TOKEN_SECRET,
-                {expiresIn: "3m"}
-            )
+            {
+                "UserInfo": {
+                    "id": result._id,
+                    "username": result.username,
+                    "roles": roles
+                }
+            },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: "3m" }
+        )
 
         // Saving refreshToken with current user
         result.refreshToken = refreshToken;
@@ -75,4 +78,4 @@ const handleNewUser = async (req, res) => {
 }
 
 
-module.exports = {handleNewUser}
+module.exports = { handleNewUser }
